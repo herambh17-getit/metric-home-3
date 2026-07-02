@@ -18,7 +18,9 @@
 <meta name="twitter:image" content="https://www.metrichomes.in/images/horizon-aerial-wide.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="images/horizon-aerial-wide.jpg" fetchpriority="high">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap"></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
@@ -43,7 +45,7 @@ a{color:inherit;text-decoration:none}
 .btn-gold{background:var(--gold);color:var(--crimson-deep)}.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px)}
 .btn-ghost{border-color:rgba(255,255,255,.3);color:#fff}.btn-ghost:hover{border-color:var(--gold-light);color:var(--gold-light)}
 .btn-ghost-dark{border-color:var(--rule);color:var(--ink)}.btn-ghost-dark:hover{border-color:var(--crimson);color:var(--crimson)}
-.btn-wa{background:#1f9d57;color:#fff}.btn-wa:hover{background:#178347;transform:translateY(-2px)}
+.btn-wa{background:#0e7d40;color:#fff}.btn-wa:hover{background:#0b6333;transform:translateY(-2px)}
 section{position:relative}
 .s{padding:96px 0}
 
@@ -200,7 +202,7 @@ section{position:relative}
 .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .submit{width:100%;justify-content:center;margin-top:8px}
 .form .alt{text-align:center;margin-top:15px;font-size:13px;color:var(--stone)}
-.form .alt a{color:#1f9d57;font-weight:600}
+.form .alt a{color:#0e7d40;font-weight:600}
 .form .legal{font-size:11px;color:var(--stone);text-align:center;margin-top:13px;line-height:1.5}
 @media(max-width:860px){.eq{grid-template-columns:1fr;gap:34px}.frow{grid-template-columns:1fr}}
 
@@ -213,7 +215,7 @@ section{position:relative}
 .foot .fb{width:100%;border-top:1px solid rgba(255,255,255,.1);padding-top:22px;margin-top:14px;font-family:var(--mono);font-size:11px;color:rgba(255,255,255,.4);display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
 
 /* Float */
-.wa-float{position:fixed;right:22px;bottom:92px;z-index:80;width:56px;height:56px;border-radius:50%;background:#1f9d57;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(31,157,87,.45);transition:.25s}
+.wa-float{position:fixed;right:22px;bottom:92px;z-index:80;width:56px;height:56px;border-radius:50%;background:#0e7d40;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(31,157,87,.45);transition:.25s}
 .wa-float:hover{transform:scale(1.08)}.wa-float svg{width:29px;height:29px;color:#fff}
 
 .reveal{opacity:0;transform:translateY(24px);transition:.7s}.reveal.in{opacity:1;transform:none}
@@ -555,12 +557,10 @@ document.querySelectorAll('.js-autovideo').forEach(v=>{
   const btn=document.createElement('button');btn.className='vid-toggle';btn.type='button';
   const playIco='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
   const pauseIco='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-  const canAuto=!matchMedia('(prefers-reduced-motion: reduce)').matches&&!matchMedia('(max-width:760px)').matches&&!(navigator.connection&&navigator.connection.saveData);
-  function setBtn(){btn.innerHTML=v.paused?playIco:pauseIco;btn.setAttribute('aria-label',v.paused?'Play video':'Pause video');}
+  function setBtn(){btn.innerHTML=v.paused?playIco:pauseIco;btn.setAttribute('aria-label',v.paused?'Play drone tour':'Pause video');}
   btn.addEventListener('click',()=>{if(v.paused){v.preload='auto';v.play();}else{v.pause();}setBtn();});
   v.addEventListener('play',setBtn);v.addEventListener('pause',setBtn);
   v.parentElement.appendChild(btn);
-  if(canAuto){v.preload='auto';const p=v.play();if(p&&p.catch)p.catch(()=>{});}
   setBtn();
 });
 // Form -> HYBRID: capture in Formspree AND open WhatsApp pre-filled.
@@ -575,7 +575,7 @@ document.getElementById('enqForm').addEventListener('submit',e=>{
   const cfg=encodeURIComponent(document.getElementById('config').value||'');
   const wn=encodeURIComponent(document.getElementById('when').value||'');
   const wa='https://wa.me/919987221188?text='+encodeURIComponent('Hi Metric Homes, I would like to visit Horizon Grande, Tarkarli.')+'%0AName%3A%20'+nm+'%0AConfiguration%3A%20'+cfg+'%0APreferred%3A%20'+wn;
-  btn.innerHTML='✓ Opening WhatsApp…';btn.style.background='#1f9d57';
+  btn.innerHTML='✓ Opening WhatsApp…';btn.style.background='#0e7d40';
   setTimeout(()=>{window.location.href=wa;},400);
 });
 </script>

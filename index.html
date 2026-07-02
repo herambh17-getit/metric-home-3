@@ -30,7 +30,11 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Preload LCP hero image -->
+<link rel="preload" as="image" href="images/horizon-aerial-hero-1280.jpg" imagesrcset="images/horizon-aerial-hero-800.jpg 800w, images/horizon-aerial-hero-1280.jpg 1280w, images/horizon-aerial-hero.jpg 1920w" imagesizes="100vw" fetchpriority="high">
+<!-- Non-blocking fonts -->
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap"></noscript>
 
 <!-- ============ STRUCTURED DATA (SEO) ============ -->
 <script type="application/ld+json">
@@ -116,7 +120,7 @@ section{position:relative}
 .btn-gold{background:var(--gold);color:var(--crimson-deep)}.btn-gold:hover{background:var(--gold-light);transform:translateY(-2px)}
 .btn-ghost{border-color:rgba(255,255,255,.3);color:#fff}.btn-ghost:hover{border-color:var(--gold-light);color:var(--gold-light)}
 .btn-ghost-dark{border-color:var(--rule);color:var(--ink)}.btn-ghost-dark:hover{border-color:var(--crimson);color:var(--crimson)}
-.btn-wa{background:#1f9d57;color:#fff}.btn-wa:hover{background:#178347;transform:translateY(-2px)}
+.btn-wa{background:#0e7d40;color:#fff}.btn-wa:hover{background:#0b6333;transform:translateY(-2px)}
 
 /* utility bar */
 .util{background:var(--ink);color:rgba(255,255,255,.7);font-family:var(--mono);font-size:11px;letter-spacing:.5px}
@@ -200,7 +204,7 @@ section{position:relative}
 .fg-visual{position:relative;overflow:hidden;min-height:560px}
 .fg-visual img,.fg-visual video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .fg-visual .fv-play{font-family:var(--mono);font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.72);margin-top:14px;display:inline-flex;align-items:center;gap:7px}
-.fg-visual .fv-play::before{content:"";width:7px;height:7px;border-radius:50%;background:#1f9d57;box-shadow:0 0 0 4px rgba(31,157,87,.3);animation:pulse 1.6s infinite}
+.fg-visual .fv-play::before{content:"";width:7px;height:7px;border-radius:50%;background:#0e7d40;box-shadow:0 0 0 4px rgba(31,157,87,.3);animation:pulse 1.6s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 .fg-visual .ov{position:absolute;inset:0;background:linear-gradient(180deg,rgba(61,14,24,.15),rgba(61,14,24,.65));z-index:1}
 .fg-visual .fv-in{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:space-between;padding:34px;color:#fff}
@@ -349,7 +353,7 @@ section{position:relative}
 .field input:focus,.field select:focus{outline:none;border-color:var(--crimson);box-shadow:0 0 0 3px var(--crimson-mist)}
 .form .frow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .form .submit{width:100%;justify-content:center;margin-top:8px}
-.form .alt{text-align:center;margin-top:16px;font-size:13px;color:var(--stone)}.form .alt a{color:#1f9d57;font-weight:600}
+.form .alt{text-align:center;margin-top:16px;font-size:13px;color:var(--stone)}.form .alt a{color:#0e7d40;font-weight:600}
 .form .legal{font-size:11px;color:var(--stone);text-align:center;margin-top:14px;line-height:1.5}
 
 /* footer */
@@ -381,16 +385,18 @@ section{position:relative}
 .foot-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;padding:26px 0;font-family:var(--mono);font-size:11px;letter-spacing:.5px;color:rgba(255,255,255,.4)}
 
 /* floating */
-.wa-float{position:fixed;right:22px;bottom:22px;z-index:80;width:58px;height:58px;border-radius:50%;background:#1f9d57;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(31,157,87,.45);transition:.25s}
+.wa-float{position:fixed;right:22px;bottom:22px;z-index:80;width:58px;height:58px;border-radius:50%;background:#0e7d40;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 30px rgba(31,157,87,.45);transition:.25s}
 .wa-float:hover{transform:scale(1.08)}.wa-float svg{width:30px;height:30px;color:#fff}
 .mobar{display:none;position:fixed;bottom:0;left:0;right:0;z-index:81;background:#fff;border-top:1px solid var(--rule);padding:10px 14px;gap:10px;box-shadow:0 -8px 30px rgba(0,0,0,.08)}
 .mobar .btn{flex:1;justify-content:center;font-size:11px;padding:13px 10px}
 
 .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
 .burger{background:none;border:0}
-.fg-visual .vid-toggle{position:absolute;z-index:6;bottom:14px;right:14px;width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.45);background:rgba(26,22,20,.5);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
-.fg-visual .vid-toggle:hover{background:rgba(26,22,20,.75)}
-.fg-visual .vid-toggle svg{width:16px;height:16px}
+.fg-visual .vid-toggle{position:absolute;z-index:6;top:50%;left:50%;transform:translate(-50%,-50%);width:70px;height:70px;border-radius:50%;border:1.5px solid rgba(255,255,255,.65);background:rgba(26,22,20,.42);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);transition:background .25s,transform .25s,width .25s,height .25s}
+.fg-visual .vid-toggle:hover{background:rgba(124,28,46,.75)}
+.fg-visual .vid-toggle svg{width:26px;height:26px;margin-left:2px}
+.fg-visual .vid-toggle.playing{top:auto;left:auto;bottom:14px;right:14px;transform:none;width:40px;height:40px}
+.fg-visual .vid-toggle.playing svg{width:16px;height:16px;margin-left:0}
 @media (prefers-reduced-motion: reduce){*{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.reveal{opacity:1!important;transform:none!important}}
 .reveal.in{opacity:1;transform:none}
 
@@ -466,7 +472,7 @@ section{position:relative}
 <main id="main">
 <!-- HERO -->
 <header class="hero" id="top">
-  <div class="hero-bg"><img src="images/horizon-aerial-hero.jpg" srcset="images/horizon-aerial-hero-800.jpg 800w, images/horizon-aerial-hero-1280.jpg 1280w, images/horizon-aerial-hero.jpg 2000w" sizes="100vw" width="2000" height="1500" alt="Aerial view of Horizon Grande by Metric Homes — sea-facing residences under construction near Tarkarli beach, Konkan coast" fetchpriority="high"></div>
+  <div class="hero-bg"><img src="images/horizon-aerial-hero-1280.jpg" srcset="images/horizon-aerial-hero-800.jpg 800w, images/horizon-aerial-hero-1280.jpg 1280w, images/horizon-aerial-hero.jpg 1920w" sizes="100vw" width="1920" height="1440" alt="Aerial view of Horizon Grande by Metric Homes — sea-facing residences under construction near Tarkarli beach, Konkan coast" fetchpriority="high" decoding="async"></div>
   <div class="wrap">
     <div class="hero-eye eyebrow on-dark">Premium Affordable Homes · Mumbai &amp; Maharashtra</div>
     <h1>Built on <b>Trust.</b><br>Designed for <i>Life.</i></h1>
@@ -875,15 +881,10 @@ document.querySelectorAll('.js-autovideo').forEach(v=>{
   const btn=document.createElement('button');btn.className='vid-toggle';btn.type='button';
   const playIco='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
   const pauseIco='<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
-  const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const small=matchMedia('(max-width:760px)').matches;
-  const saveData=navigator.connection&&navigator.connection.saveData;
-  const canAuto=!reduce&&!small&&!saveData;
-  function setBtn(){btn.innerHTML=v.paused?playIco:pauseIco;btn.setAttribute('aria-label',v.paused?'Play video':'Pause video');}
-  btn.addEventListener('click',()=>{if(v.paused){v.preload='auto';v.play();}else{v.pause();}setBtn();});
+  function setBtn(){const p=v.paused;btn.innerHTML=p?playIco:pauseIco;btn.setAttribute('aria-label',p?'Play drone tour':'Pause video');btn.classList.toggle('playing',!p);}
+  btn.addEventListener('click',()=>{if(v.paused){v.preload='auto';v.play();}else{v.pause();}});
   v.addEventListener('play',setBtn);v.addEventListener('pause',setBtn);
   v.parentElement.appendChild(btn);
-  if(canAuto){v.preload='auto';const p=v.play();if(p&&p.catch)p.catch(()=>{});}
   setBtn();
 });
 
@@ -901,7 +902,7 @@ document.getElementById('enqForm').addEventListener('submit',e=>{
   const proj=encodeURIComponent(document.getElementById('project').value||'');
   const cfg=encodeURIComponent(document.getElementById('config').value||'');
   const wa='https://wa.me/919987221188?text='+encodeURIComponent('Hi Metric Homes, I would like to book a site visit.')+'%0AName%3A%20'+nm+'%0AProject%3A%20'+proj+'%0AConfiguration%3A%20'+cfg;
-  btn.innerHTML='✓ Opening WhatsApp…';btn.style.background='#1f9d57';
+  btn.innerHTML='✓ Opening WhatsApp…';btn.style.background='#0e7d40';
   setTimeout(()=>{window.location.href=wa;},400);
 });
 </script>
