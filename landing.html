@@ -1393,9 +1393,29 @@ document.querySelectorAll('form.lf').forEach(function(form){
     btn.textContent = 'Sending…';
 
     // 1) Capture the lead. keepalive so it survives the tab losing focus.
+    //    The response is checked: a silently-rejected POST would otherwise show
+    //    the visitor a success screen while no lead was ever stored. Findings go
+    //    to the console, to analytics, and to window.__leadCapture for debugging.
     try{
-      fetch(FORMSPREE, {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}, keepalive:true});
-    }catch(err){}
+      fetch(FORMSPREE, {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}, keepalive:true})
+        .then(function(res){
+          window.__leadCapture = {ok:res.ok, status:res.status, form:form.id, at:new Date().toISOString()};
+          if(res.ok){
+            console.info('[Metric] Lead stored in Formspree (' + res.status + ').');
+          }else{
+            track('lead_capture_failed', {page:'landing', form:form.id, status:res.status});
+            res.text().then(function(t){
+              window.__leadCapture.body = t;
+              console.error('[Metric] Formspree rejected the lead — HTTP ' + res.status + ':', t);
+            });
+          }
+        })
+        .catch(function(err){
+          window.__leadCapture = {ok:false, error:String(err), form:form.id};
+          track('lead_capture_failed', {page:'landing', form:form.id, status:'network'});
+          console.error('[Metric] Could not reach Formspree:', err);
+        });
+    }catch(err){ console.error('[Metric] Lead capture threw:', err); }
 
     var val = function(n){ var f = form.elements[n]; return f && f.value ? f.value.trim() : ''; };
     var isDoc = form.id === 'magnetForm' || form.id === 'exitForm';
