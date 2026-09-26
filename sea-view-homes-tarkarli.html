@@ -1069,41 +1069,55 @@ document.querySelectorAll('form.lf').forEach(function(form){
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    if(!validate()) return;
+    if(form.dataset.sending === '1') return;          /* prevent duplicate submissions */
+    if(!validate()) return;                            /* keep existing validation */
 
     var btn = form.querySelector('.submit');
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-
-    /* 1) Capture the lead. keepalive so it survives the tab losing focus. */
-    try{
-      fetch(FORMSPREE, {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}, keepalive:true});
-    }catch(err){}
+    var orig = btn ? btn.innerHTML : '';
+    form.dataset.sending = '1';
+    if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var val = function(n){ var f = form.elements[n]; return f && f.value ? f.value.trim() : ''; };
-    track('generate_lead', {page:'tarkarli-answers', form:form.id, value:1});
 
-    var msg = 'Hi Metric Homes, I would like to book a site visit at Horizon Grande, Tarkarli.'
-      + '\nName: ' + val('name')
-      + '\nPhone: +91 ' + val('phone')
-      + '\nConfiguration: ' + val('config')
-      + (val('visit') ? '\nPreferred: ' + val('visit') : '');
+    /* Honeypot: silently drop bots (server enforces this too). */
+    if(val('_gotcha') !== ''){ return; }
 
-    var link = 'https://wa.me/' + CONFIG.phone + '?text=' + encodeURIComponent(msg);
+    var payload = {
+      name: val('name'), phone: val('phone'), email: val('email'),
+      config: val('config'), visit: val('visit'),
+      source: 'Sea View Homes Tarkarli', page_url: location.href,
+      _gotcha: val('_gotcha')
+    };
 
-    /* 2) Show the confirmation FIRST so the page is never a dead end,
-          then hand off to WhatsApp in a new tab. */
-    steps.forEach(function(s){ s.hidden = true; });
-    if(prog){ prog.hidden = true; }
-    success.hidden = false;
-    var waBtn = success.querySelector('[data-wa]');
-    if(waBtn){ waBtn.href = link; }
-    success.scrollIntoView({block:'nearest', behavior:'smooth'});
-
-    setTimeout(function(){
-      var w = window.open(link, '_blank');
-      if(!w){ window.location.href = link; }   /* popup blocked: go directly */
-    }, 350);
+    /* Send to secure /api/privyr, then hand off to WhatsApp ONLY on success. */
+    fetch('/api/privyr', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
+      .then(function(res){ return res.json().catch(function(){ return {}; }).then(function(d){ return {ok: res.ok && d.ok, d: d}; }); })
+      .then(function(r){
+        if(!r.ok){ throw new Error((r.d && r.d.error) || 'fail'); }
+        track('generate_lead', {page:'tarkarli-answers', form:form.id, value:1});
+        var msg = 'Hi Metric Homes, I would like to book a site visit at Horizon Grande, Tarkarli.'
+          + '\nName: ' + payload.name
+          + '\nPhone: +91 ' + payload.phone
+          + '\nConfiguration: ' + payload.config
+          + (payload.visit ? '\nPreferred: ' + payload.visit : '');
+        var link = 'https://wa.me/' + CONFIG.phone + '?text=' + encodeURIComponent(msg);
+        /* Confirmation screen first, then hand off to WhatsApp in a new tab. */
+        steps.forEach(function(s){ s.hidden = true; });
+        if(prog){ prog.hidden = true; }
+        success.hidden = false;
+        var waBtn = success.querySelector('[data-wa]');
+        if(waBtn){ waBtn.href = link; }
+        success.scrollIntoView({block:'nearest', behavior:'smooth'});
+        setTimeout(function(){
+          var w = window.open(link, '_blank');
+          if(!w){ window.location.href = link; }   /* popup blocked: go directly */
+        }, 350);
+      })
+      .catch(function(){
+        form.dataset.sending = '0';
+        if(btn){ btn.disabled = false; btn.innerHTML = orig; }
+        alert('Sorry — we could not submit right now. Please try again, or tap the WhatsApp button.');
+      });
   });
 });
 

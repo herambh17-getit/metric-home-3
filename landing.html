@@ -1397,65 +1397,59 @@ document.querySelectorAll('form.lf').forEach(function(form){
 
   form.addEventListener('submit', function(e){
     e.preventDefault();
-    if(!validate()) return;
+    if(form.dataset.sending === '1') return;          // prevent duplicate submissions
+    if(!validate()) return;                            // keep existing validation
 
     var btn = form.querySelector('.submit');
-    btn.disabled = true;
-    btn.textContent = 'Sending…';
-
-    // 1) Capture the lead. keepalive so it survives the tab losing focus.
-    //    The response is checked: a silently-rejected POST would otherwise show
-    //    the visitor a success screen while no lead was ever stored. Findings go
-    //    to the console, to analytics, and to window.__leadCapture for debugging.
-    try{
-      fetch(FORMSPREE, {method:'POST', body:new FormData(form), headers:{'Accept':'application/json'}, keepalive:true})
-        .then(function(res){
-          window.__leadCapture = {ok:res.ok, status:res.status, form:form.id, at:new Date().toISOString()};
-          if(res.ok){
-            console.info('[Metric] Lead stored in Formspree (' + res.status + ').');
-          }else{
-            track('lead_capture_failed', {page:'landing', form:form.id, status:res.status});
-            res.text().then(function(t){
-              window.__leadCapture.body = t;
-              console.error('[Metric] Formspree rejected the lead — HTTP ' + res.status + ':', t);
-            });
-          }
-        })
-        .catch(function(err){
-          window.__leadCapture = {ok:false, error:String(err), form:form.id};
-          track('lead_capture_failed', {page:'landing', form:form.id, status:'network'});
-          console.error('[Metric] Could not reach Formspree:', err);
-        });
-    }catch(err){ console.error('[Metric] Lead capture threw:', err); }
+    var orig = btn ? btn.innerHTML : '';
+    form.dataset.sending = '1';
+    if(btn){ btn.disabled = true; btn.textContent = 'Sending…'; }
 
     var val = function(n){ var f = form.elements[n]; return f && f.value ? f.value.trim() : ''; };
+
+    // Honeypot: silently drop bots (server enforces this too).
+    if(val('_gotcha') !== ''){ return; }
+
     var isDoc = form.id === 'magnetForm' || form.id === 'exitForm';
+    var payload = {
+      name: val('name'), phone: val('phone'), email: val('email'),
+      config: val('config'), visit: val('visit'),
+      source: 'Ads Landing Page', page_url: location.href,
+      _gotcha: val('_gotcha')
+    };
 
-    track(isDoc ? 'cost_sheet_request' : 'generate_lead', {page:'landing', form:form.id, value:1});
-
-    var msg = (isDoc
-        ? 'Hi Metric Homes, please send me the price list and floor plans for Horizon Grande.'
-        : 'Hi Metric Homes, I would like to book a site visit at Horizon Grande, Tarkarli.')
-      + '\nName: ' + val('name')
-      + '\nPhone: +91 ' + val('phone')
-      + '\nConfiguration: ' + val('config')
-      + (!isDoc && val('visit') ? '\nPreferred: ' + val('visit') : '');
-
-    var link = 'https://wa.me/' + CONFIG.phone + '?text=' + encodeURIComponent(msg);
-
-    // 2) Show the confirmation FIRST so the page is never a dead end,
-    //    then hand off to WhatsApp in a new tab.
-    steps.forEach(function(s){ s.hidden = true; });
-    if(prog){ prog.hidden = true; }
-    success.hidden = false;
-    var waBtn = success.querySelector('[data-wa]');
-    if(waBtn){ waBtn.href = link; }
-    success.scrollIntoView({block:'nearest', behavior:'smooth'});
-
-    setTimeout(function(){
-      var w = window.open(link, '_blank');
-      if(!w){ window.location.href = link; }   // popup blocked: go directly
-    }, 350);
+    // Send to secure /api/privyr, then hand off to WhatsApp ONLY on success.
+    fetch('/api/privyr', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)})
+      .then(function(res){ return res.json().catch(function(){ return {}; }).then(function(d){ return {ok: res.ok && d.ok, d: d}; }); })
+      .then(function(r){
+        window.__leadCapture = {ok:r.ok, form:form.id, at:new Date().toISOString()};
+        if(!r.ok){ track('lead_capture_failed', {page:'landing', form:form.id}); throw new Error((r.d && r.d.error) || 'fail'); }
+        track(isDoc ? 'cost_sheet_request' : 'generate_lead', {page:'landing', form:form.id, value:1});
+        var msg = (isDoc
+            ? 'Hi Metric Homes, please send me the price list and floor plans for Horizon Grande.'
+            : 'Hi Metric Homes, I would like to book a site visit at Horizon Grande, Tarkarli.')
+          + '\nName: ' + payload.name
+          + '\nPhone: +91 ' + payload.phone
+          + '\nConfiguration: ' + payload.config
+          + (!isDoc && payload.visit ? '\nPreferred: ' + payload.visit : '');
+        var link = 'https://wa.me/' + CONFIG.phone + '?text=' + encodeURIComponent(msg);
+        // Confirmation screen first, then hand off to WhatsApp in a new tab.
+        steps.forEach(function(s){ s.hidden = true; });
+        if(prog){ prog.hidden = true; }
+        success.hidden = false;
+        var waBtn = success.querySelector('[data-wa]');
+        if(waBtn){ waBtn.href = link; }
+        success.scrollIntoView({block:'nearest', behavior:'smooth'});
+        setTimeout(function(){
+          var w = window.open(link, '_blank');
+          if(!w){ window.location.href = link; }   // popup blocked: go directly
+        }, 350);
+      })
+      .catch(function(){
+        form.dataset.sending = '0';
+        if(btn){ btn.disabled = false; btn.innerHTML = orig; }
+        alert('Sorry — we could not submit right now. Please try again, or tap the WhatsApp button.');
+      });
   });
 });
 

@@ -574,20 +574,29 @@ document.querySelectorAll('.js-autovideo').forEach(v=>{
   v.parentElement.appendChild(btn);
   setBtn();
 });
-// Form -> HYBRID: capture in Formspree AND open WhatsApp pre-filled.
-// Formspree form id: xeajnvnd (also set in the <form action> above).
-const FORMSPREE='https://formspree.io/f/xeajnvnd';
-document.getElementById('enqForm').addEventListener('submit',e=>{
+// Form -> POST to secure /api/privyr (Privyr webhook stays server-side), THEN WhatsApp.
+// The <form action> still points to Formspree as a no-JS fallback (kept intentionally).
+const LEAD_SOURCE='Horizon Grande';
+document.getElementById('enqForm').addEventListener('submit',async e=>{
   e.preventDefault();const f=e.target;
+  if(f.dataset.sending==='1')return;                       // prevent duplicate submissions
   if(!f.checkValidity()){f.reportValidity();return;}
-  const btn=f.querySelector('.submit');btn.disabled=true;btn.textContent='Sending…';
-  try{fetch(FORMSPREE,{method:'POST',body:new FormData(f),headers:{'Accept':'application/json'},keepalive:true});}catch(err){}
-  const nm=encodeURIComponent((document.getElementById('name').value||'').trim());
-  const cfg=encodeURIComponent(document.getElementById('config').value||'');
-  const wn=encodeURIComponent(document.getElementById('when').value||'');
-  const wa='https://wa.me/919987221188?text='+encodeURIComponent('Hi Metric Homes, I would like to visit Horizon Grande, Tarkarli.')+'%0AName%3A%20'+nm+'%0AConfiguration%3A%20'+cfg+'%0APreferred%3A%20'+wn;
-  btn.innerHTML='✓ Opening WhatsApp…';btn.style.background='#0e7d40';
-  setTimeout(()=>{window.location.href=wa;},400);
+  const fd=new FormData(f),g=k=>(fd.get(k)||'').toString().trim();
+  if(g('_gotcha')!=='')return;                             // honeypot: silently drop bots
+  const btn=f.querySelector('.submit'),orig=btn.innerHTML;
+  f.dataset.sending='1';btn.disabled=true;btn.textContent='Sending…';
+  const payload={name:g('name'),phone:g('phone'),email:g('email'),project:g('project'),config:g('config'),visit:g('visit')||g('when'),source:LEAD_SOURCE,page_url:location.href,_gotcha:g('_gotcha')};
+  try{
+    const res=await fetch('/api/privyr',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok||!data.ok)throw new Error(data.error||'fail');
+    const wa='https://wa.me/919987221188?text='+encodeURIComponent('Hi Metric Homes, I would like to visit Horizon Grande, Tarkarli.')+'%0AName%3A%20'+encodeURIComponent(payload.name)+'%0AConfiguration%3A%20'+encodeURIComponent(payload.config)+(payload.visit?'%0APreferred%3A%20'+encodeURIComponent(payload.visit):'');
+    btn.innerHTML='✓ Opening WhatsApp…';btn.style.background='#0e7d40';
+    window.location.href=wa;
+  }catch(err){
+    f.dataset.sending='0';btn.disabled=false;btn.innerHTML=orig;
+    alert('Sorry — we could not submit right now. Please try again, or tap “Message us on WhatsApp”.');
+  }
 });
 </script>
 </body>
