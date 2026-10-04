@@ -110,7 +110,7 @@
   --rule:#E4DFD6; --maxw:1240px;
   --shadow:0 24px 60px -28px rgba(26,22,20,.35);
 }
-html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;overflow-x:hidden;width:100%}
 body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.65;overflow-x:hidden}
 img{max-width:100%;display:block}
 a{color:inherit;text-decoration:none}
@@ -423,7 +423,7 @@ section{position:relative}
   /* Hero mobile layout: stack CTAs full-width, right-size type, clear the sticky bar */
   .hero{min-height:88vh}
   .hero .wrap{padding-top:84px;padding-bottom:92px}
-  .hero h1{font-size:clamp(34px,10vw,56px);letter-spacing:-.5px;max-width:none}
+  .hero h1{font-size:clamp(28px,8vw,52px);letter-spacing:-.4px;max-width:none;overflow-wrap:break-word}
   .hero-sub{font-size:16px;margin:18px 0 26px;max-width:none}
   .hero-cta{flex-direction:column;align-items:stretch;gap:10px}
   .hero-cta .btn{width:100%;justify-content:center}
