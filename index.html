@@ -157,7 +157,7 @@ section{position:relative}
 .burger span{width:24px;height:2px;background:var(--ink);transition:.3s}
 
 /* hero */
-.hero{position:relative;color:#fff;overflow:hidden;min-height:92vh;display:flex;align-items:flex-end}
+.hero{position:relative;color:#fff;overflow:hidden;min-height:92vh;display:flex;flex-direction:column;justify-content:flex-end}
 .hero-bg{position:absolute;inset:0;z-index:0}
 .hero-bg img{width:100%;height:100%;object-fit:cover}
 .hero-bg::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(61,14,24,.55) 0%,rgba(61,14,24,.30) 35%,rgba(26,22,20,.86) 100%)}
@@ -436,7 +436,10 @@ section{position:relative}
   .pillars,.trans-grid,.tests,.jgrid,.upc,.steps,.eq,.foot-top,.impact-grid{grid-template-columns:1fr}
   .gharidin{grid-template-columns:1fr;gap:16px;text-align:center}
   .form .frow{grid-template-columns:1fr}
-  .wa-float{bottom:78px}.mobar{display:flex}body{padding-bottom:64px}
+  .wa-float{display:none}.mobar{display:flex}body{padding-bottom:64px}
+  .ticker .wrap{flex-direction:column;gap:14px;padding-top:20px;padding-bottom:20px}
+  .dir{grid-template-columns:1fr;gap:28px}
+  .dir-body .quote,.dir-body p{overflow-wrap:break-word;max-width:100%}
   .foot-bottom{flex-direction:column;align-items:flex-start}
   .dir-photo .badge{left:0}
 }
