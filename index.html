@@ -438,7 +438,9 @@ section{position:relative}
   .form .frow{grid-template-columns:1fr}
   .wa-float{display:none}.mobar{display:flex}body{padding-bottom:64px}
   .ticker .wrap{flex-direction:column;gap:14px;padding-top:20px;padding-bottom:20px}
-  .dir{grid-template-columns:1fr;gap:28px}
+  .dir{grid-template-columns:1fr;gap:28px;min-width:0}
+  .dir>*{min-width:0}
+  .dir-photo{max-width:100%}
   .dir-body .quote,.dir-body p{overflow-wrap:break-word;max-width:100%}
   .foot-bottom{flex-direction:column;align-items:flex-start}
   .dir-photo .badge{left:0}
